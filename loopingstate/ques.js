@@ -176,11 +176,77 @@
 // }
 // console.log(fact)
 
+// i=1
+// num=7
+// fact=1
+// do{
+//     fact = fact * i
+//     i++
+// }while(i<=num)
+//     console.log(fact)
+
+// 10 - 1 
+
+// for(i=10;i>=1;i--){
+//     console.log(i)
+// }
+
+// i=10
+// while(i>=1){
+//     console.log(i)
+//     i--
+// }
+
+// i=10
+// do{
+//     console.log(i)
+//     i--
+// }while(i>=1)
+
+// multiplies of 3 
+
+// for(i=1;i<=30;i++){
+//     if (i%3 == 0){
+//         console.log(i)
+//     }
+// }
+
+// i=1
+// while(i<=30){
+//     if(i%3 == 0){
+//         console.log(i)
+//     }
+//     i++
+// }
+
+// i=1
+// do{
+//     if(i%3 == 0){
+//         console.log(i)
+//     }
+//     i++
+// }while(i<=30)
+ 
+// sum of sqaures 
+
+// sum = 0
+// for(i=1;i<=5;i++){
+//     sum += i*i
+// }
+// console.log(sum)
+
+// i=1
+// sum=0
+// while(i<=5){
+//     sum += i*i
+//     i++
+// }
+// console.log(sum)
+
 i=1
-num=7
-fact=1
+sum=0
 do{
-    fact = fact * i
+    sum += i*i
     i++
-}while(i<=num)
-    console.log(fact)
+}while(i<=5)
+    console.log(sum)
