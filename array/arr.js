@@ -1,0 +1,26 @@
+// let arr = [1,2,'hello']
+// console.log(arr[1])
+// console.log(arr.length)
+// console.log(arr)
+// console.log(arr.join(','))
+// console.log(arr.indexOf(1))
+// arr.push(3)
+// console.log(arr)
+// arr[1]=4
+// console.log(arr)
+// arr.shift()
+// console.log(arr)
+// arr.pop()
+// console.log(arr)
+// console.log('splice')
+// // arr.splice(startindex,number of elements to remove)
+// arr.splice(0,2)
+// console.log(arr)
+
+let sp = [1,2,3,4,5]
+sp.splice(0,2)
+console.log(sp)
+sp.splice(0,0,'hello','word')
+console.log(sp)
+sp.splice(3,0,'hi','python')
+console.log(sp)
