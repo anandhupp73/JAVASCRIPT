@@ -42,3 +42,14 @@ document.addEventListener('mousemove',function(e){
 
 // -------------------------------3---------------------
 
+const tool = document.querySelector('.tool')
+const tip = document.getElementById('tip')
+
+tool.addEventListener('mouseenter',()=>{
+  tip.style.display = 'block'
+})
+
+tool.addEventListener('mouseleave',()=>{
+  tip.style.display = 'none'
+
+})
