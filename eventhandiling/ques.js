@@ -47,9 +47,43 @@ const tip = document.getElementById('tip')
 
 tool.addEventListener('mouseenter',()=>{
   tip.style.display = 'block'
+  tip.style.background = "green"
 })
 
 tool.addEventListener('mouseleave',()=>{
   tip.style.display = 'none'
 
 })
+
+// -----------------4-------------
+
+function toggleSection(){
+  const sec = document.getElementById('section')
+  sec.style.display = sec.style.display === "block" ? "none" : "block"
+}
+
+// -----------------5-----------------
+
+const btn = document.getElementById('btn')
+btn.onmouseenter = () => btn.style.background = "yellow"
+btn.onmouseleave = () => btn.style.background = "white"
+
+// ------------------6-------------------
+
+txt.oninput = () =>{
+  document.getElementById('count').textContent = txt.value.length
+}
+
+// ------------------7------------------
+
+window.onscroll = () =>{
+  const y = window.scrollY
+  document.getElementById("layer").style.top = (y * 0.5 ) + "px"
+}
+
+// -----------------8---------------
+
+function openModal(src){
+    document.getElementById("modal").style.display = "block";
+    document.getElementById("modalImg").src = src;
+}

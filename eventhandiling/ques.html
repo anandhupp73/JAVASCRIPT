@@ -38,6 +38,37 @@
         <span id="tip" style="display: none; position: absolute; z-index:0;margin-top: 20px;">this is tooltip</span>
     </div>
 
+    ---------------4-----------
+
+    <button onclick="toggleSection()">Toggle content</button>
+
+    <div id="section" style="display: none; margin-top: 5px;">this content is toggle test</div>
+    <br><br>
+
+    -------------------5---------------------
+
+    <button id="btn" style="padding: 5px; border: 1px solid wheat;">Hiver me</button>
+    <br>
+
+    -----------------6-------------
+    <textarea id="txt" rows="3" cols="10"></textarea>
+    <p>characters: <span id="count">0</span></p>
+    <br><br>
+    --------------7----------------
+
+    <!-- <div id="layer" style="position: absolute; top: 0;left: 0;font-size: 20px;">Paralex test</div>
+    <div style="height: 100px;"></div>
+    <br> -->
+
+    -------------------8-----------------
+
+    <img src="NVIDIA GeForce RTX 4060.jpg" style="height: 100px;"  onclick="openModal(this.src)" style="cursor:pointer;">
+
+    <div id="modal" onclick="this.style.display='none'" style="
+        display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+        background:rgba(0,0,0,0.8);text-align:center;padding-top:100px;">
+        <img id="modalImg" style="width:60%;">
+    </div>
 
     <script src="ques.js"></script>
 </body>
