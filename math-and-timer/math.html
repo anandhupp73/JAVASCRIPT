@@ -11,3 +11,20 @@
     <script src="math.js"></script>
 </body>
 </html>
+function updateClock() {
+    const now = new Date();
+
+    let h = now.getHours().toString().padStart(2, '0');
+    let m = now.getMinutes().toString().padStart(2, '0');
+    let s = now.getSeconds().toString().padStart(2, '0');
+
+    document.getElementById("hour").textContent = h;
+    document.getElementById("minute").textContent = m;
+    document.getElementById("sec").textContent = s;
+}
+
+// Update immediately
+updateClock();
+
+// Update every second
+setInterval(updateClock, 1000);
