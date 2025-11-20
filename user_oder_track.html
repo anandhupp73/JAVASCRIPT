@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Order Details</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #eef2ff; /* Light indigo background */
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        /* Item Status Colors */
+        .status-PENDING { background-color: #fef3c7; color: #b45309; }
+        .status-CONFIRMED { background-color: #d1fae5; color: #065f46; }
+        .status-SHIPPED { background-color: #bfdbfe; color: #1e40af; }
+        .status-OUT_FOR_DELIVERY { background-color: #a5f3fc; color: #0e7490; }
+        .status-DELIVERED { background-color: #34d399; color: #064e3b; }
+        .status-CANCELLED { background-color: #fecaca; color: #991b1b; }
+
+        /* Timeline styles */
+        .timeline-step {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #e0e7ff;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        .timeline-step.active::before {
+            border-color: #4f46e5;
+            background-color: #4f46e5;
+        }
+        .timeline-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 5px; /* Half of width + border */
+            top: 1.25rem;
+            bottom: -0.5rem;
+            width: 2px;
+            background-color: #e0e7ff;
+        }
+        .timeline-step.current-step::before {
+             box-shadow: 0 0 0 4px #c7d2fe;
+             background-color: #4f46e5;
+        }
+
+        /* Modal specific styles */
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold text-gray-900">
+                <span class="text-indigo-600">My</span> Orders
+            </h1>
+            <button class="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition">
+                <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Back to List
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Order Tracking Timeline -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-xl shadow-xl border-l-4 border-indigo-500">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                        Order Tracking <span id="orderIdDisplay" class="text-indigo-600 font-extrabold"></span>
+                    </h2>
+
+                    <!-- Timeline -->
+                    <div id="trackingTimeline" class="space-y-6">
+                        <!-- Timeline steps injected here by JS -->
+                    </div>
+                    
+                    <div class="mt-6 text-sm text-gray-600 italic border-t pt-4">
+                        <p>Latest update: <span id="latestUpdateDate" class="font-medium"></span></p>
+                        <p class="mt-1">Tracking number: <span class="font-mono text-indigo-500">TRK987654321</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Details and Items -->
+            <div class="lg:col-span-2">
+                
+                <!-- Order Summary Card -->
+                <div class="bg-white p-6 rounded-xl shadow-xl mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Summary</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm text-gray-700">
+                        <div>
+                            <p class="font-medium text-gray-500">Placed On</p>
+                            <p id="summaryDate" class="font-semibold"></p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-500">Total Amount</p>
+                            <p id="summaryTotal" class="font-semibold text-xl text-green-600"></p>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <p class="font-medium text-gray-500">Shipping Address</p>
+                            <p class="font-semibold">123 Main St, Springfield, IL 62704</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item List Card -->
+                <div class="bg-white p-6 rounded-xl shadow-2xl ring-1 ring-gray-200">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Items in Your Order</h2>
+                    
+                    <div id="itemListContainer" class="space-y-6 divide-y divide-gray-100">
+                        <!-- Item list injected here by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cancellation Modal -->
+    <div id="cancellationModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 transition-all transform border-t-4 border-red-500">
+            <h3 class="text-2xl font-extrabold text-gray-900 mb-2">Confirm Cancellation</h3>
+            <p class="text-sm text-gray-500 mb-6">Please confirm you want to cancel the item below. This action cannot be undone.</p>
+            
+            <div class="bg-red-50 p-4 rounded-lg mb-6 border border-red-200">
+                <p class="text-sm font-bold text-red-800" id="modalItemName"></p>
+                <p class="text-xs text-red-600 mt-1">Quantity: <span id="modalItemQuantity"></span> | Price: <span id="modalItemPrice"></span></p>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-4">
+                <button onclick="closeModal()" class="py-2 px-5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition shadow-sm">
+                    Keep Item
+                </button>
+                <button id="modalConfirmButton" onclick="performItemCancellation()" class="py-2 px-5 rounded-lg text-white bg-red-600 hover:bg-red-700 transition font-semibold shadow-md hover:shadow-lg">
+                    Yes, Cancel Item
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Box for UI feedback -->
+    <div id="messageBox" class="fixed bottom-4 right-4 p-4 rounded-lg text-sm text-white shadow-md bg-indigo-600 hidden transition-all duration-300 ease-in-out z-50"></div>
+
+
+    <script>
+        // --- Simulated Order Data ---
+        let orderData = {
+            id: 1011,
+            date: '2023-11-20',
+            total: 335.00, // Adjusted total based on items
+            statusSteps: ['CONFIRMED', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED'],
+            statusHistory: [
+                { status: 'CONFIRMED', date: '2023-11-20 10:00' },
+                { status: 'SHIPPED', date: '2023-11-20 14:30' },
+                // Current overall status is SHIPPED, as it's the latest in the timeline
+            ],
+            items: [
+                { id: 'A1', name: 'Premium Wireless Headset', quantity: 1, price: 199.99, currentStatus: 'SHIPPED' },
+                { id: 'B2', name: 'Ergonomic Mousepad (Red)', quantity: 2, price: 15.00, currentStatus: 'CONFIRMED' },
+                { id: 'C3', name: '4K Monitor Cable', quantity: 1, price: 20.00, currentStatus: 'CANCELLED' },
+                { id: 'D4', name: 'Smartwatch Charger', quantity: 1, price: 100.00, currentStatus: 'CONFIRMED' },
+            ]
+        };
+
+        const STATUS_MAPPING = {
+            'CONFIRMED': 'Confirmed & Processing',
+            'SHIPPED': 'Shipped',
+            'OUT_FOR_DELIVERY': 'Out for Delivery',
+            'DELIVERED': 'Delivered',
+            'CANCELLED': 'Cancelled',
+        };
+
+        // --- Global Modal State ---
+        let itemToCancel = null;
+
+        // --- Utility Functions ---
+
+        function formatCurrency(amount) {
+            return `$${amount.toFixed(2)}`;
+        }
+
+        function getStatusBadgeHtml(statusKey) {
+            const statusText = STATUS_MAPPING[statusKey] || statusKey;
+            return `<span class="status-badge status-${statusKey}">${statusText}</span>`;
+        }
+        
+        /**
+         * Displays a temporary success or error message.
+         */
+        function showMessage(message, isError = false) {
+            const box = document.getElementById('messageBox');
+            box.textContent = message;
+            
+            box.classList.remove('hidden', 'bg-indigo-600', 'bg-red-600');
+            box.classList.add(isError ? 'bg-red-600' : 'bg-indigo-600');
+            
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 4000);
+        }
+
+        // --- Rendering Functions ---
+
+        /**
+         * Renders the Order Tracking Timeline
+         */
+        function renderTimeline() {
+            const timelineContainer = document.getElementById('trackingTimeline');
+            timelineContainer.innerHTML = '';
+            
+            const currentStatusKey = orderData.statusHistory[orderData.statusHistory.length - 1]?.status;
+
+            orderData.statusSteps.forEach((stepStatus, index) => {
+                const historyEntry = orderData.statusHistory.find(h => h.status === stepStatus);
+                const isActive = historyEntry !== undefined;
+                const isCurrent = stepStatus === currentStatusKey;
+                const dateText = historyEntry ? historyEntry.date.split(' ')[0] : 'Expected';
+                
+                const div = document.createElement('div');
+                div.className = `timeline-step py-2 ${isActive ? 'active' : ''} ${isCurrent ? 'current-step' : ''}`;
+                
+                div.innerHTML = `
+                    <p class="font-bold text-sm ${isActive ? 'text-gray-800' : 'text-gray-400'}">
+                        ${STATUS_MAPPING[stepStatus]}
+                    </p>
+                    <p class="text-xs text-gray-500">${dateText}</p>
+                `;
+                timelineContainer.appendChild(div);
+            });
+
+            document.getElementById('latestUpdateDate').textContent = currentStatusKey ? orderData.statusHistory[orderData.statusHistory.length - 1].date : 'N/A';
+        }
+
+        /**
+         * Renders the list of order items.
+         */
+        function renderItems() {
+            const container = document.getElementById('itemListContainer');
+            container.innerHTML = '';
+            
+            orderData.items.forEach(item => {
+                const canCancel = item.currentStatus === 'CONFIRMED' || item.currentStatus === 'PENDING';
+                
+                const itemHtml = `
+                    <div class="flex items-start justify-between py-4">
+                        <!-- Item Details -->
+                        <div class="flex-1 min-w-0">
+                            <p class="text-base font-semibold text-gray-900">${item.name}</p>
+                            <p class="text-sm text-gray-500 mt-1">Qty: ${item.quantity} | ${formatCurrency(item.price)} each</p>
+                            <div class="mt-2">
+                                ${getStatusBadgeHtml(item.currentStatus)}
+                            </div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="ml-4 flex flex-col items-end space-y-2">
+                            <p class="text-lg font-bold text-gray-800">${formatCurrency(item.price * item.quantity)}</p>
+                            ${canCancel 
+                                ? `<button 
+                                    onclick="openCancellationModal('${item.id}')"
+                                    class="text-red-600 hover:text-red-700 text-sm font-semibold transition py-1 px-3 border border-red-300 rounded-lg hover:bg-red-50"
+                                >
+                                    Cancel Item
+                                </button>` 
+                                : `<span class="text-xs text-gray-400 pt-2">${item.currentStatus === 'CANCELLED' ? 'Already Cancelled' : 'Too late to cancel'}</span>`
+                            }
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', itemHtml);
+            });
+        }
+
+        /**
+         * Renders the overall summary details.
+         */
+        function renderSummary() {
+            document.getElementById('orderIdDisplay').textContent = `#${orderData.id}`;
+            document.getElementById('summaryDate').textContent = orderData.date;
+            document.getElementById('summaryTotal').textContent = formatCurrency(orderData.total);
+        }
+
+        // --- Modal Control Functions ---
+
+        function openCancellationModal(itemId) {
+            itemToCancel = orderData.items.find(i => i.id === itemId);
+            if (!itemToCancel) return;
+
+            document.getElementById('modalItemName').textContent = itemToCancel.name;
+            document.getElementById('modalItemQuantity').textContent = itemToCancel.quantity;
+            document.getElementById('modalItemPrice').textContent = formatCurrency(itemToCancel.price);
+            
+            document.getElementById('cancellationModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('cancellationModal').classList.remove('show');
+            itemToCancel = null;
+        }
+
+        /**
+         * Simulates the item cancellation process.
+         */
+        function performItemCancellation() {
+            if (!itemToCancel) {
+                closeModal();
+                return;
+            }
+
+            // --- SIMULATION START ---
+            // In a real Django application:
+            // 1. Send an AJAX POST request to a Django view (e.g., /user/orders/cancel_item/)
+            //    with { order_id: orderData.id, item_id: itemToCancel.id }
+            // 2. The Django view updates the database record and recalculates the order total.
+            // 3. Upon success, the view returns the updated order data.
+            
+            // Simulating update
+            const itemIndex = orderData.items.findIndex(i => i.id === itemToCancel.id);
+            if (itemIndex !== -1) {
+                // Update local data model
+                orderData.total -= (itemToCancel.price * itemToCancel.quantity);
+                orderData.items[itemIndex].currentStatus = 'CANCELLED';
+                
+                // Re-render UI
+                renderSummary();
+                renderItems(); 
+                
+                showMessage(`Item '${itemToCancel.name}' has been successfully cancelled. Your order total has been updated.`);
+            } else {
+                showMessage(`❌ Error: Could not find item ID ${itemToCancel.id}.`, true);
+            }
+            // --- SIMULATION END ---
+
+            closeModal();
+        }
+
+
+        // Initial setup
+        window.onload = () => {
+            renderSummary();
+            renderTimeline();
+            renderItems();
+        };
+
+    </script>
+
+</body>
+</html>

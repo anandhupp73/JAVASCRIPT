@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Payment</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Light blue-gray background */
+        }
+        .payment-option {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border-width: 2px;
+            border-color: #e5e7eb;
+        }
+        .payment-option.selected {
+            border-color: #4f46e5; /* Indigo */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .payment-option:hover {
+            background-color: #f9fafb;
+        }
+        /* Style for hidden online payment fields */
+        #onlinePaymentFields {
+            transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+        }
+        #onlinePaymentFields.show {
+            max-height: 500px; /* Sufficient height to show all fields */
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-2xl font-extrabold text-gray-900">
+                <span class="text-indigo-600">Secure</span> Checkout
+            </h1>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+            
+            <!-- Left Column: Payment Details and Shipping Info -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Shipping & Billing Preview -->
+                <div class="bg-white p-6 rounded-xl shadow-lg ring-1 ring-gray-100">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-3">1. Shipping & Contact</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                        <div>
+                            <p class="font-medium text-gray-500">Shipping Address</p>
+                            <p class="font-semibold">John Doe</p>
+                            <p>123 Commerce Rd, Suite 4B</p>
+                            <p>Springfield, IL 62704, USA</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-500">Contact</p>
+                            <p class="font-semibold">john.doe@example.com</p>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                    <button class="mt-4 text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                        Change Details
+                    </button>
+                </div>
+
+                <!-- Payment Method Section -->
+                <div class="bg-white p-6 rounded-xl shadow-lg ring-1 ring-gray-100">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-3">2. Choose Payment Method</h2>
+                    
+                    <div class="space-y-4">
+                        
+                        <!-- Option 1: Pay Online -->
+                        <div id="onlineOption" class="payment-option p-4 rounded-lg bg-white border-2 transition" onclick="selectPayment('online')">
+                            <label class="flex items-center space-x-3">
+                                <input type="radio" name="paymentMethod" value="online" class="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500" checked>
+                                <span class="text-lg font-semibold text-gray-900 flex items-center">
+                                    Pay Online (Credit Card / Wallet)
+                                    <svg class="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                </span>
+                            </label>
+                            
+                            <!-- Online Payment Fields (Dynamically shown/hidden) -->
+                            <div id="onlinePaymentFields" class="show mt-4 px-2">
+                                <form id="onlinePaymentForm" onsubmit="event.preventDefault(); processPayment('Online');">
+                                    <!-- Card Number -->
+                                    <div class="mb-4">
+                                        <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                                        <input type="text" id="cardNumber" name="cardNumber" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" placeholder="XXXX XXXX XXXX XXXX" required maxlength="16" pattern="[0-9]{16}">
+                                    </div>
+
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <!-- Expiry Date -->
+                                        <div class="col-span-2">
+                                            <label for="expiryDate" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date (MM/YY)</label>
+                                            <input type="text" id="expiryDate" name="expiryDate" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" placeholder="01/25" required maxlength="5" pattern="(0[1-9]|1[0-2])\/\d{2}">
+                                        </div>
+
+                                        <!-- CVV -->
+                                        <div>
+                                            <label for="cvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                                            <input type="password" id="cvv" name="cvv" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" placeholder="123" required maxlength="4" pattern="[0-9]{3,4}">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Option 2: Cash on Delivery -->
+                        <div id="codOption" class="payment-option p-4 rounded-lg bg-white border-2 transition" onclick="selectPayment('cod')">
+                            <label class="flex items-center space-x-3">
+                                <input type="radio" name="paymentMethod" value="cod" class="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-lg font-semibold text-gray-900 flex items-center">
+                                    Cash on Delivery (COD)
+                                    <span class="text-xs ml-2 text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full font-medium">Fees may apply</span>
+                                </span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-2 px-2">
+                                Pay with cash when your order arrives at your doorstep. Please ensure you have the exact amount ready.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Summary -->
+            <div class="lg:col-span-1 mt-8 lg:mt-0">
+                <div class="bg-white p-6 rounded-xl shadow-2xl ring-1 ring-gray-200 sticky top-20">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-3">Order Summary</h2>
+                    
+                    <!-- Item/Subtotal rows -->
+                    <div class="space-y-3 text-sm text-gray-700">
+                        <div class="flex justify-between">
+                            <span>Subtotal (3 items)</span>
+                            <span>$325.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Shipping & Handling</span>
+                            <span>$15.00</span>
+                        </div>
+                        <div id="codFeeRow" class="hidden flex justify-between text-orange-600">
+                            <span class="font-semibold">COD Fee</span>
+                            <span class="font-semibold">$5.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Separator -->
+                    <div class="my-4 border-t border-dashed border-gray-200"></div>
+
+                    <!-- Total -->
+                    <div class="flex justify-between items-center text-lg font-extrabold text-gray-900">
+                        <span>Order Total</span>
+                        <span id="orderTotal">$340.00</span>
+                    </div>
+
+                    <p class="text-xs text-green-600 mt-1 font-semibold text-right">
+                        You save $25.00!
+                    </p>
+
+                    <!-- Place Order Button -->
+                    <button 
+                        id="placeOrderButton"
+                        onclick="triggerPayment()"
+                        class="w-full mt-6 py-3 rounded-xl bg-indigo-600 text-white font-bold text-lg shadow-xl hover:bg-indigo-700 transition transform hover:scale-[1.01]"
+                    >
+                        Place Order (Total: $340.00)
+                    </button>
+                    
+                    <p class="text-xs text-gray-500 mt-3 text-center">
+                        By placing your order, you agree to our terms and conditions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Message Box for UI feedback -->
+    <div id="messageBox" class="fixed bottom-4 right-4 p-4 rounded-lg text-sm text-white shadow-xl bg-indigo-600 hidden transition-all duration-300 ease-in-out z-50"></div>
+
+    <script>
+        let currentPaymentMethod = 'online';
+        const BASE_TOTAL = 340.00; // Subtotal + Shipping
+        const COD_FEE = 5.00;
+
+        // --- Utility Functions ---
+
+        /**
+         * Displays a temporary success or error message.
+         */
+        function showMessage(message, isError = false) {
+            const box = document.getElementById('messageBox');
+            box.textContent = message;
+            
+            box.classList.remove('hidden', 'bg-indigo-600', 'bg-red-600');
+            box.classList.add(isError ? 'bg-red-600' : 'bg-indigo-600');
+            
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 5000);
+        }
+
+        /**
+         * Updates the UI based on the selected payment method (online or COD).
+         */
+        function updateUI(method) {
+            const onlineFields = document.getElementById('onlinePaymentFields');
+            const onlineOptionDiv = document.getElementById('onlineOption');
+            const codOptionDiv = document.getElementById('codOption');
+            const codFeeRow = document.getElementById('codFeeRow');
+            const orderTotalSpan = document.getElementById('orderTotal');
+            const placeOrderButton = document.getElementById('placeOrderButton');
+            let newTotal = BASE_TOTAL;
+
+            // 1. Update selection visual style
+            onlineOptionDiv.classList.remove('selected');
+            codOptionDiv.classList.remove('selected');
+
+            // 2. Handle Online vs. COD logic
+            if (method === 'online') {
+                onlineFields.classList.add('show');
+                onlineOptionDiv.classList.add('selected');
+                codFeeRow.classList.add('hidden');
+            } else if (method === 'cod') {
+                onlineFields.classList.remove('show');
+                codOptionDiv.classList.add('selected');
+                codFeeRow.classList.remove('hidden');
+                newTotal += COD_FEE;
+            }
+
+            // 3. Update total and button text
+            orderTotalSpan.textContent = `$${newTotal.toFixed(2)}`;
+            placeOrderButton.textContent = `Place Order (Total: $${newTotal.toFixed(2)})`;
+        }
+        
+        /**
+         * Selects the payment method and updates the global state.
+         */
+        function selectPayment(method) {
+            currentPaymentMethod = method;
+            document.querySelector(`input[value="${method}"]`).checked = true;
+            updateUI(method);
+        }
+
+        /**
+         * Main function triggered by the Place Order button.
+         */
+        function triggerPayment() {
+            if (currentPaymentMethod === 'online') {
+                // For online payment, try to submit the form for validation
+                const form = document.getElementById('onlinePaymentForm');
+                if (form.reportValidity()) {
+                    processPayment('Online');
+                } else {
+                    showMessage("❌ Please complete the payment details correctly.", true);
+                }
+            } else if (currentPaymentMethod === 'cod') {
+                processPayment('Cash on Delivery');
+            }
+        }
+
+        /**
+         * Simulates the final transaction submission.
+         */
+        function processPayment(method) {
+            // Disable button to prevent double-click
+            const button = document.getElementById('placeOrderButton');
+            button.disabled = true;
+            button.textContent = 'Processing...';
+
+            // Simulate API latency
+            setTimeout(() => {
+                // --- SIMULATION START ---
+                // In a real application, you would send the payment details or COD confirmation 
+                // to the server here using fetch/AJAX.
+                
+                button.disabled = false;
+                button.textContent = 'Order Placed!';
+                button.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                button.classList.add('bg-green-600', 'hover:bg-green-700');
+                
+                showMessage(`🎉 Success! Your order has been placed via ${method}. Redirecting to confirmation page...`);
+                
+                // Simulate redirection (e.g., after 3 seconds)
+                setTimeout(() => {
+                    // window.location.href = "/order-confirmation";
+                    console.log("Redirecting to confirmation page.");
+                }, 3000);
+
+                // --- SIMULATION END ---
+            }, 1500);
+        }
+
+        // Initial setup on load
+        window.onload = () => {
+            // Ensure the initial state is correct based on the checked radio button
+            selectPayment('online'); 
+        };
+    </script>
+
+</body>
+</html>
