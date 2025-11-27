@@ -92,3 +92,95 @@
 //     .then(result=>console.log(result))
 //     .catch(error=>console.log(error))
     // .finally(()=>console.log('final'))
+
+
+
+// function getPosts(){
+// fetch("https://jsonplaceholder.typicode.com/posts")
+// .then((res)=>res.json() )
+// .then((data)=>{
+//     console.log(data);
+    
+//     let str=``
+
+//     data.map((dt)=>{
+//         str+=`<li>${dt.title}</li>`
+//     })
+
+//     document.getElementById("list").innerHTML=str
+    
+// })
+// .catch((error)=>{
+//     console.log("catch is work");
+    
+//     console.log(error);
+// })
+
+// }
+
+// function getComments(){
+// fetch("https://jsonplaceholder.typicode.com/comments")
+// .then((res)=>res.json() )
+// .then((data)=>{
+//     console.log(data);
+    
+//     let str=``
+
+//     data.map((dt)=>{
+//         str+=`<li>${dt.body}</li>`
+//     })
+
+//     document.getElementById("list").innerHTML=str
+    
+// })
+// .catch((error)=>{
+//     console.log("catch is work");
+    
+//     console.log(error);
+// })
+
+// }
+
+
+// function getAlbums(){
+// fetch("https://jsonplaceholder.typicode.com/albums")
+// .then((res)=>res.json() )
+// .then((data)=>{
+//     console.log(data);
+    
+//     let str=``
+
+//     data.map((dt)=>{
+//         str+=`<li>${dt.title}</li>`
+//     })
+
+//     document.getElementById("list").innerHTML=str
+    
+// })
+// .catch((error)=>{
+//     console.log("catch is work");
+    
+//     console.log(error);
+// })
+
+// }
+
+// function getPhotos(){
+//     fetch("https://jsonplaceholder.typicode.com/photos")
+//     .then((res)=>res.json())
+//     .then((data)=>{
+//         console.log(data);
+//         let str = ``
+
+//         data.map((dt)=>{
+//             str+=` <div class="card">
+//                 <img src="${dt.thumbnailUrl}" alt="test">
+//             </div>`
+//         })
+//         document.querySelector('.cards').innerHTML = str
+
+//         // document.getElementById('list').innerHTML = str
+//     })
+// }
+
+

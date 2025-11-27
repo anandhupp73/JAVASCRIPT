@@ -1,12 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-</head>
-<body>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .main {
+            padding: 20px;
+        }
 
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr); 
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .card img{
+            width: 200px;
+            height: 200px;
+            object-fit: cover; 
+            border-radius: 6px;
+        } 
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div>
+            <button onclick="getPhotos()">Click Me</button>
+        </div>
+        <div class="cards">
+            <!-- <div class="card">
+                <img src="test.webp" alt="">
+            </div> -->
+        </div>
+        <!-- <ul id="list"></ul> -->
+    </div>
     <script src="pro.js"></script>
 </body>
+
 </html>
