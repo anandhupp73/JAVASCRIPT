@@ -1,97 +1,123 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Simple CRUD App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student management</title>
     <style>
-        body { font-family: Arial; margin: 30px; }
-        input { margin: 5px; padding: 5px; }
-        table { width: 50%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background: #f2f2f2; }
-        button { padding: 5px 10px; margin: 2px; }
+        table, th, td { border: 1px solid black; border-collapse: collapse; }
+    th, td { padding: 8px; }
+    form { margin-bottom: 20px; }
     </style>
 </head>
-
 <body>
-    <h2>Simple CRUD Operations</h2>
+    <h2>Student management</h2>
 
-    <div>
-        <input id="name" placeholder="Name">
-        <input id="age" placeholder="Age" type="number">
-        <button onclick="createUser()">Add User</button>
-    </div>
+    <form id="studentform">
+        <label>Name</label>
+        <input type="text" id="name" required>
 
-    <table>
+        <label >Age</label>
+        <input type="number" id="age" required>
+
+        <label>Department</label>
+        <select id="department">
+            <option value="">Select</option>
+            <option value="python">python</option>
+            <option value="mern">mern</option>
+            <option value="network">network</option>
+        </select>
+
+        <button type="submit" id="saveBtn">add student</button>
+    </form>
+
+    <label>Filter by Department</label>
+    <select id="filterDept">
+        <option value="all">All</option>
+        <option value="python">Python</option>
+        <option value="mern">Mern</option>
+        <option value="network">Network</option>
+    </select>
+
+    <table border="1">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Name</th>
                 <th>Age</th>
+                <th>Dept</th>
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody id="userTable"></tbody>
+        <tbody id="studentsTable"></tbody>
     </table>
 
     <script>
-        let users = [];
+        let students = [];
         let editId = null;
 
-        function createUser() {
-            const name = document.getElementById("name").value;
-            const age = document.getElementById("age").value;
+        document.getElementById('studentform').addEventListener('submit', handleSubmit);
+        document.getElementById('filterDept').addEventListener('change', renderTable);
 
-            if (!name || !age) return alert("Please enter both fields");
+        function handleSubmit(e){
+            e.preventDefault();
 
-            if (editId === null) {
-                // CREATE
-                users.push({
-                    id: Date.now(),
-                    name,
-                    age
-                });
-            } else {
-                // UPDATE
-                const user = users.find(u => u.id === editId);
-                user.name = name;
-                user.age = age;
-                editId = null;
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const department = document.getElementById('department').value;
+
+            if (editId !== null){
+                students = students.map(s => s.id === editId ? {id: s.id, name, age, department } : s);
+                editId = null ;
+                document.getElementById('saveBtn').textContent = "Add student";
             }
-
-            document.getElementById("name").value = "";
-            document.getElementById("age").value = "";
+            else{
+                students.push({id: Date.now(), name, age, department});
+            }
+            e.target.reset();
             renderTable();
         }
+        function renderTable(){
+            const tbody = document.getElementById('studentsTable');
+            tbody.innerHTML = "";
 
-        function editUser(id) {
-            const user = users.find(u => u.id === id);
-            document.getElementById("name").value = user.name;
-            document.getElementById("age").value = user.age;
-            editId = id;
-        }
+            const filter = document.getElementById('filterDept').value;
+            const filtered = filter === "all" ? students : students.filter(s => s.department === filter);
 
-        function deleteUser(id) {
-            users = users.filter(u => u.id !== id);
-            renderTable();
-        }
-
-        function renderTable() {
-            const table = document.getElementById("userTable");
-            table.innerHTML = "";
-
-            users.forEach(u => {
-                table.innerHTML += `
-                    <tr>
-                        <td>${u.name}</td>
-                        <td>${u.age}</td>
-                        <td>
-                            <button onclick="editUser(${u.id})">Edit</button>
-                            <button onclick="deleteUser(${u.id})">Delete</button>
-                        </td>
-                    </tr>
+            filtered.forEach((s,index) => {
+                const row = document.createElement('tr')
+                row.innerHTML = `
+                <td>${index + 1 }</td>
+                <td>${s.name }</td>
+                <td>${s.age }</td>
+                <td>${s.department }</td>
+                <td>
+                    <button onclick ="editStudent(${s.id})">Edit</button>
+                    <button onclick = "if(confirm('Delete this student?')) deleteStudent(${s.id})">Delete</button>
+                </td>
                 `;
+                tbody.appendChild(row);
+            
             });
         }
-    </script>
 
+        function editStudent(id){
+            const s = students.find(st => st.id === id)
+            document.getElementById('name').value = s.name;
+            document.getElementById('age').value = s.age;
+            document.getElementById('department').value = s.department;
+
+            editId = id;
+            document.getElementById('saveBtn').textContent = "save Changes"
+        }
+
+        function deleteStudent(id){
+            students = students.filter(s => s.id !== id);
+            renderTable();
+        }
+
+
+
+    </script>
 </body>
 </html>
