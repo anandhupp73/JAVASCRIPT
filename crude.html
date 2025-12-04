@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple CRUD App</title>
+    <style>
+        body { font-family: Arial; margin: 30px; }
+        input { margin: 5px; padding: 5px; }
+        table { width: 50%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f2f2f2; }
+        button { padding: 5px 10px; margin: 2px; }
+    </style>
+</head>
+
+<body>
+    <h2>Simple CRUD Operations</h2>
+
+    <div>
+        <input id="name" placeholder="Name">
+        <input id="age" placeholder="Age" type="number">
+        <button onclick="createUser()">Add User</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="userTable"></tbody>
+    </table>
+
+    <script>
+        let users = [];
+        let editId = null;
+
+        function createUser() {
+            const name = document.getElementById("name").value;
+            const age = document.getElementById("age").value;
+
+            if (!name || !age) return alert("Please enter both fields");
+
+            if (editId === null) {
+                // CREATE
+                users.push({
+                    id: Date.now(),
+                    name,
+                    age
+                });
+            } else {
+                // UPDATE
+                const user = users.find(u => u.id === editId);
+                user.name = name;
+                user.age = age;
+                editId = null;
+            }
+
+            document.getElementById("name").value = "";
+            document.getElementById("age").value = "";
+            renderTable();
+        }
+
+        function editUser(id) {
+            const user = users.find(u => u.id === id);
+            document.getElementById("name").value = user.name;
+            document.getElementById("age").value = user.age;
+            editId = id;
+        }
+
+        function deleteUser(id) {
+            users = users.filter(u => u.id !== id);
+            renderTable();
+        }
+
+        function renderTable() {
+            const table = document.getElementById("userTable");
+            table.innerHTML = "";
+
+            users.forEach(u => {
+                table.innerHTML += `
+                    <tr>
+                        <td>${u.name}</td>
+                        <td>${u.age}</td>
+                        <td>
+                            <button onclick="editUser(${u.id})">Edit</button>
+                            <button onclick="deleteUser(${u.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+
+</body>
+</html>
